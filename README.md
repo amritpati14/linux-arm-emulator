@@ -16,7 +16,8 @@
 ## Download
 
 Download the latest version 20160404-1330.4 of Linux/ARM Emulator:
-https://onedrive.live.com/redir?resid=C93799B86B006829!164
+https://onedrive.live.com/
+(announce - https://github.com/dotnet/coreclr/issues/3805)
 
 Archive for keeping the older versions (Thanks to Bruce Hoult)
 http://hoult.org/coreclr/
