@@ -1,0 +1,17 @@
+
+   How to enable USB device
+  ========================
+
+Get the USB device VendorID:ProductID with lsusb. Then, start
+qemu emulator with "-usb -usbdevice host:0781:5406" option.
+
+
+ubuntu14.04$> lsusb
+   ......
+Bus 002 Device 007: ID 0781:5406 SanDisk Corp. Cruzer Micro U3
+Pass that to KVM, and ask for the boot menu:
+
+ubuntu14.04$> sudo qemu-arm-image -m 512 -smp 1 -drive file=./file.img \
+              -usb -usbdevice host:0781:5406 -boot menu=on
+
+End of line. 

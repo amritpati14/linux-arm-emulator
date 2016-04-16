@@ -1,0 +1,17 @@
+
+   TODO
+  ========
+
+1. Support snapshot function to restore previous status easily
+   $ qemu-img create -f qcow2 -b os-cleaninstall.img snapshot.img
+   $ qemu-img info snapshot.img
+     ...
+   backing file: os-cleaninstall.img (actual path: os-cleaninstall.img)
+   $ qemu -hda os-cleaninstall.img -snapshot
+
+2. ARM V8 64bit support
+   - We will start the support of ARM V8 64bit architecture after completing the 
+     DotnetCore ARM 32bit port successfully. 
+
+
+End of line. 

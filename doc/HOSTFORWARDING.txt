@@ -1,0 +1,16 @@
+
+Connecting to guest OS from host PC with user-mode network stack(QEMU)
+======================================================================
+
+There is one simple method in case that you just want to use some ports in guest OS.
+In this case, QEMU support 'hostfwd' option, If you replace the existing '-net' option
+with '-net nic -net user,net=192.168.100.0/24,host=192.168.100.1,hostfwd=tcp:127.0.0.1:2222-192.168.100.2:22', 
+the emulator can directly connect to internet via NAT interface without additional package installation like 
+the tap0'(uml-utilities) software.
+
+You can easily connect to the emulator's guest OS via as following:
+ubuntu14.04$> ssh -p 2222 root@localhost
+
+
+End. 
+

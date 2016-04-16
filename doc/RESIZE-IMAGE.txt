@@ -1,0 +1,30 @@
+
+    How to resize file size of guest image
+    ======================================
+
+
+1. Resize guest image:
+qemu-img resize rootfs-t30.ext4 +20G
+qemu-img info   rootfs-t30.ext4
+
+image: ./rootfs-t30.ext4
+file format: raw
+virtual size: 24G (25769803776 bytes)
+disk size: 4.0G
+
+
+2. Run resize2fs command for guest image
+sudo losetup -f --show rootfs-t30.ext4
+sudo e2fsck -fy  /dev/loop0
+sudo resize2fs   /dev/loop0
+sudo losetup -d  /dev/loop0
+
+
+3. Check increased size of guest image on ARM Emulator:
+root:/> df
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/root             24639868   1931412  21433800   8% /
+devtmpfs                516204         0    516204   0% /dev
+root:/> 
+
+End of line. 

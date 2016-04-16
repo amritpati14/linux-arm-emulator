@@ -1,0 +1,29 @@
+  How to use NFS Server/Client 
+  ============================
+
+First of all, let's define the meaning of the 'NFS Server' and 'NFS Client'. 
+Ubuntu 14.04(Host) will be NFS Server. Target will be NFS Client. 
+
+1. On ubuntu 14.04(Host)
+========================
+sudo apt-get install nfs-kernel-server nfs-common portmap
+sudo mkdir -p /work/nfs
+sudo chmod -R 777 /work/nfs
+sudo vi /etc/exports
+-------------------
+/work/nfs 10.113.62.177(rw,sync,no_subtree_check,insecure,no_root_squash)
+/work/nfs 192.168.100.1(rw,sync,no_subtree_check,insecure,no_root_squash)
+/work/nfs 192.168.100.2(rw,sync,no_subtree_check,insecure,no_root_squash)
+-------------------
+sudo /etc/init.d/nfs-kernel-server restart
+sudo exportfs -rv
+
+
+2. On target board
+==================
+busybox mount -t nfs -o nolock 192.168.100.1:/work/nfs /nfs
+cd /nfs
+touch hello-nfs.txt
+
+3. Enjoy NFS World.!!!
+

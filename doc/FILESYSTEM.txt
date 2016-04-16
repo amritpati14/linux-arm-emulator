@@ -1,0 +1,14 @@
+
+
+How to specify a default mount option in EXT4 filesystem superblock.
+-------------------------------------------------------------------
+
+Filesystems can be forced to use a specific data journalling mode
+by specifying a mount option on the command line
+
+tune2fs -o journal_data /dev/sda1             <== "mount -o data=journal"
+tune2fs -o journal_data_ordered /dev/sda1     <== "mount -o data=ordered"
+tune2fs -o journal_data_writeback   /dev/sda1 <== "mount -o data=writeback"
+tune2fs -o ^has_journal /dev/sda1             <== "Turn journalling OFF"
+
+End of line.

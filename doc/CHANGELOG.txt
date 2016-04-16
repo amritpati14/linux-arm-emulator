@@ -1,0 +1,65 @@
+
+Changelog
+=========
+
+#################### [ver. 20160404-1330] #########################
+
+Added coreclr runtime to support softfp based software platform 
+
+Added /dotnet/setenv/setenv_coreclr.sh for ARM CI 
+
+Added SSHFS, NFS for convenient development environment
+
+Added libraries to compile .net core source on emulator as a native build
+.libunwind, icu52, lttng-ust, systemtap, userspace-rcu
+
+Added bind mount in order that the same contents is accessible in two places
+
+Enabled binary format support for ARM binaries through QEMU
+.https://www.kernel.org/doc/Documentation/binfmt_misc.txt
+./proc/sys/fs/binfmt_misc/register (with /usr/bin/qemu-arm-static)
+
+#################### [ver. 20160323-1130] #########################
+
+Added Soft-API based User-Space Build Environment
+.Added chroot command and qemu-arm-static command 
+
+Improved I/O speed of QEMU
+.Changed default I/O policy with "data=writeback,nobh libata.force=noncq elevator=noop"
+
+Added "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" to aware low I/O
+
+Supported sdb command (optional)
+
+Changed from "-serial stdio" parameter to "-nographic" parameter for console-based server.
+
+Changed the interrupt key form ^c to ctrl-} to avoid QEMU termination
+
+Support Hybrid linker/loader structure to support both hard-float and soft-float
+
+Added scp, ssh, and sshd into rootFS in emulator(QEMU) 
+
+#################### [ver. 20160318-1530] #########################
+
+Support virtual network interface in emulator(QEMU) 
+
+Support Multi-core Architecture
+
+Support ARM V7 Architecture for TM1(2016.01.15.1)
+
+Added ARM Cortex-A9 variant to run normal mono binaries on QEMU emulator
+
+Support both hard floating point(for .net core) and soft floating point(for mono)
+
+Make 4GiB platform image by default
+
+Added static init to keep independent structure
+
+Support EXT4 file system as a default file-system. 
+
+Support Huge File-system with MMC block device. 
+
+Added Mono 4.2.1
+
+
+End of line. 

@@ -1,0 +1,56 @@
+
+     How to Enable Network Interface
+     ===============================
+
+1. Install tunctl command On Ubuntu Linux PC
+ubuntu14.04$> sudo apt-get install uml-utilities
+ubuntu14.04$> sudo tunctl -u `whoami` -t tap0
+ubuntu14.04$> sudo ifconfig tap0 192.168.100.1 netmask 255.255.255.0 up
+ubuntu14.04$> ./start.sh
+
+
+2. Setting ifconfig On Linux/ARM Emulator
+target#> ifconfig eth0 192.168.100.2
+target#> route add default gw 192.168.100.1
+target#> ehco "nameserver 8.8.8.8" >  /etc/resolv.conf
+target#> ehco "nameserver 8.8.4.4" >> /etc/resolv.conf
+
+
+3. Setting Network Address Translation(NAT) on Ubuntu PC (Optional)
+
+First of all, you have to find enabled etherned interface (eth?)
+ubuntu14.04$> sudo ifconfig 
+
+Execute below commands as root in the ubuntu linux pc as following:
+ubuntu14.04$> sudo echo 1 > /proc/sys/net/ipv4/ip_forward
+ubuntu14.04$> sudo echo 1 > /proc/sys/net/ipv4/conf/eth0/proxy_arp
+ubuntu14.04$> sudo echo 1 > /proc/sys/net/ipv4/conf/wlan0/proxy_arp
+ubuntu14.04$> sudo echo 1 > /proc/sys/net/ipv4/conf/tap0/proxy_arp
+ubuntu14.04$> sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+ubuntu14.04$> sudo iptables -I FORWARD 1 -i tap0 -j ACCEPT
+ubuntu14.04$> sudo iptables -I FORWARD 1 -o tap0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+ubuntu14.04$> sudo iptables -L
+
+
+4. TIP:
+
+4.1 Use scp, ssh command for convenient development
+target#> scp /example/***.rpm your_id@192.168.100.1:./
+target#> ssh your_id@192.168.100.1
+
+
+4.2 Starting ssh server in emaultor
+target#> /usr/sbin/sshd
+target#> netstat -nat | grep 22
+
+ubuntu14.04$> ssh root@192.168.100.2
+Password: dxl
+z1$> su - 
+Password: dxl
+target#> id
+uid=0(root) gid=0(root) groups=0(root),29(audio),6505(pulse-access),6506(pulse-rt)
+
+
+
+End of line
+

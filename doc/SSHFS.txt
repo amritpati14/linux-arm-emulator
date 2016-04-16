@@ -1,0 +1,17 @@
+
+How to Use SSHfs to Mount a Remote Filesystem on Linux
+--------------------------------------------------------
+
+1. on ubuntu 14.04
+sudo apt-get install sshfs fuse autossh 
+sudo groupadd fuse
+sudo gpasswd -a "$USER" fuse
+mkdir ~/remote_folder
+
+
+2. on target board
+sshfs -o idmap=user username@ip.address:/remote/file/system/ ~/remote
+sudo umount ~/remote_folder
+
+
+End of line. 
