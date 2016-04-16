@@ -1,0 +1,11 @@
+--- ./emul-linux-4.5-defconfig	2016-04-16 12:37:40.976500134 +0900
++++ ./emul-linux-4.5-defconfig-new	2016-04-16 12:37:22.464770412 +0900
+@@ -243,7 +243,7 @@
+ # CONFIG_MODULE_COMPRESS is not set
+ CONFIG_MODULES_TREE_LOOKUP=y
+ CONFIG_BLOCK=y
+-CONFIG_LBDAF=y
++# CONFIG_LBDAF is not set
+ # CONFIG_BLK_DEV_BSG is not set
+ # CONFIG_BLK_DEV_BSGLIB is not set
+ # CONFIG_BLK_DEV_INTEGRITY is not set

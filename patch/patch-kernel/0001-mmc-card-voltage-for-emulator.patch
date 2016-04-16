@@ -1,0 +1,24 @@
+ARM: vexpress: Enable regulator framework when MMCI is in use
+
+As the MMCI driver obtains some of the platform data from
+a regulator (described by the device tree), the framework must
+be present - otherwise device's initialisation will fail.
+
+Signed-off-by: Pawel Moll <pawel.moll@arm.com>
+---
+ arch/arm/mach-vexpress/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-vexpress/Kconfig b/arch/arm/mach-vexpress/Kconfig
+index 52d315b..46ab88d 100644
+--- a/arch/arm/mach-vexpress/Kconfig
++++ b/arch/arm/mach-vexpress/Kconfig
+ <at>  <at>  -17,6 +17,7  <at>  <at>  config ARCH_VEXPRESS
+ 	select NO_IOPORT
+ 	select PLAT_VERSATILE
+ 	select PLAT_VERSATILE_CLCD
++	select REGULATOR if MMC_ARMMMCI
+ 	select REGULATOR_FIXED_VOLTAGE if REGULATOR
+ 	select VEXPRESS_CONFIG
+ 	help
+--
