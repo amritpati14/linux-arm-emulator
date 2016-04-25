@@ -2,6 +2,10 @@
 Changelog
 =========
 
+
+#################### [ver. 2016xxxx-xxxx] #########################
+Added /dev/shm/ (= /run/shm/) to run sem_open system call
+
 #################### [ver. 20160404-1330] #########################
 
 Added coreclr runtime to support softfp based software platform 

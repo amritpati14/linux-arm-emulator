@@ -112,10 +112,12 @@ sudo mount platform/rootfs-t30.ext4 ./platform/my/
 sudo mount -t proc /proc    ./platform/my/proc
 sudo mount -o bind /dev/    ./platform/my/dev
 sudo mount -o bind /dev/pts ./platform/my/dev/pts
+sudo mount -t tmpfs shm     ./platform/my/run/shm
+# /etc/init.d/rcS: mount -t tmpfs shm /dev/shm
 sudo mount -o bind /sys     ./platform/my/sys
-sudo mount -o bind /work/nfs     ./platform/my/nfs
+# sudo mount -o bind /work/nfs     ./platform/my/nfs
 sudo chroot ./platform/my/ qemu-arm-static /bin/bash
-sudo umount ./platform/my/nfs
+# sudo umount ./platform/my/nfs
 sudo umount ./platform/my/sys
 sudo umount ./platform/my/proc
 sudo umount ./platform/my/dev/pts
