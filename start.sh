@@ -105,21 +105,23 @@ fi
 # Enabling binary format support for ARM binaries through Qemu: 
 # .https://www.kernel.org/doc/Documentation/binfmt_misc.txt
 # .sudo cp /usr/bin/qemu-arm-static  ./platform/my/usr/bin/
-# .how to force unmount (with a lazy unmount): umount -l ./platform/my/
-# 
+# .How to force unmount (with a lazy unmount): umount -l ./platform/my/
+# .Note: In case of /etc/init.d/rcS, mount -t tmpfs shm /dev/shm
+#
+CHROOT_PS1="\[\e[1;35m\](chroot):\u\[\e[m\]\]"
 function make_arm_build_env {
 sudo mount platform/rootfs-t30.ext4 ./platform/my/
 sudo mount -t proc /proc    ./platform/my/proc
 sudo mount -o bind /dev/    ./platform/my/dev
 sudo mount -o bind /dev/pts ./platform/my/dev/pts
 sudo mount -t tmpfs shm     ./platform/my/run/shm
-# /etc/init.d/rcS: mount -t tmpfs shm /dev/shm
 sudo mount -o bind /sys     ./platform/my/sys
 # sudo mount -o bind /work/nfs     ./platform/my/nfs
-sudo chroot ./platform/my/ qemu-arm-static /bin/bash
+sudo chroot ./platform/my/ qemu-arm-static /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
 # sudo umount ./platform/my/nfs
 sudo umount ./platform/my/sys
 sudo umount ./platform/my/proc
+sudo umount ./platform/my/run/shm
 sudo umount ./platform/my/dev/pts
 sudo umount ./platform/my/dev
 sudo umount ./platform/my/
