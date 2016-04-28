@@ -108,6 +108,7 @@ fi
 # .How to force unmount (with a lazy unmount): umount -l ./platform/my/
 # .Note: In case of /etc/init.d/rcS, mount -t tmpfs shm /dev/shm
 #
+QEMU=""
 CHROOT_PS1="\[\e[1;35m\](chroot):\u\[\e[m\]\]"
 function make_arm_build_env {
 sudo mount platform/rootfs-t30.ext4 ./platform/my/
@@ -117,7 +118,8 @@ sudo mount -o bind /dev/pts ./platform/my/dev/pts
 sudo mount -t tmpfs shm     ./platform/my/run/shm
 sudo mount -o bind /sys     ./platform/my/sys
 # sudo mount -o bind /work/nfs     ./platform/my/nfs
-sudo chroot ./platform/my/ qemu-arm-static /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
+if ! uname -m | grep -q arm;then QEMU=qemu-arm-static; fi
+sudo chroot ./platform/my/ $QEMU /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
 # sudo umount ./platform/my/nfs
 sudo umount ./platform/my/sys
 sudo umount ./platform/my/proc
