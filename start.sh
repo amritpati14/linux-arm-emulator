@@ -67,10 +67,16 @@ echo -e " q. Exit"
 echo -e ""
 echo -e " ===================================================================== "
 read -p " >> Enter Number (e.g. 1):" MENU_NO
-
+}
 
 
 ### Start Emulator
+function start_emulator {
+MENU_NO=$1
+if [[ "$MENU_NO" = "" ]]; then
+    select_guestos
+fi
+
 if [[ "$MENU_NO" = "1" ]]; then
 	# arm v7 - cortex-a9 with linux 4.3 (up-to-date)
 	echo -e ""
@@ -98,7 +104,7 @@ elif [[ "$MENU_NO" = "3" ]]; then
 elif [[ "$MENU_NO" = "q" || "$MENU_NO" = "Q" ]]; then
 	exit 1
 else
-	select_guestos	
+	start_emulator
 fi
 }
 
@@ -149,7 +155,6 @@ function display_network_guide {
 
 ### Start Script: main function
 set_configuration
-select_guestos
-
+start_emulator $1
 
 # end of line
