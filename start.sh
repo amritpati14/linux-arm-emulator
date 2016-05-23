@@ -33,16 +33,20 @@ White='\e[0;37m'        # White
 
 # Initialize default variables
 __tap0='false'
+__rootfs_default=''
 __rootfs_linux_arm='rootfs-t30.ext4'
 __rootfs_ubuntu_arm='rootfs-u1404.ext4'
-__rootfs_default=''
 
-# Set environment  of QEMU
+__user_mode_default=''
+__user_mode_linux_arm=''
+__user_mode_ubuntu_arm='single noplymouth'
+
+# Set environment variables of QEMU kernel
 function set_configuration {
 __arch='-M vexpress-a9 -smp cores=2 -m 1024'
 __kernel='-kernel ./kernel/kernel43-zImage-vexpress -dtb ./kernel/kernel43-vexpress-v2p-ca9.dtb'
 __image='-drive file=./platform/'$__rootfs_default',if=sd,format=raw,cache=writeback' 
-__kernelopt='console=ttyAMA0,115200 rw security=none single recovery data=writeback,nobh libata.force=noncq elevator=noop root=/dev/mmcblk0'
+__kernelopt='console=ttyAMA0,115200 rw security=none '$__user_mode_default' data=writeback,nobh libata.force=noncq elevator=noop root=/dev/mmcblk0'
 __graphic_no='-nographic'
 __graphic_yes='-serail stdio'
 __network='-net nic,model=lan9118 -net tap,ifname=tap0,script=no'
@@ -96,6 +100,7 @@ if [[ "$MENU_NO" = "1" ]]; then
 	   exit 1  
 	fi
 	echo -e ""
+        __user_mode_default=$__user_mode_ubuntu_arm
         __rootfs_default=$__rootfs_ubuntu_arm
         set_configuration
 	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no $__network
@@ -112,6 +117,7 @@ elif [[ "$MENU_NO" = "2" ]]; then
 	   exit 1  
 	fi
 	echo -e ""
+        __user_mode_default=$__user_mode_linux_arm
         __rootfs_default=$__rootfs_linux_arm
         set_configuration
 	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no $__network
