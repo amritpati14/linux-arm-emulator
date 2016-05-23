@@ -30,16 +30,23 @@ White='\e[0;37m'        # White
 
 
 ### Configuration: Set the various build properties here
+
+# Initialize default variables
+__tap0='false'
+__rootfs_linux_arm='rootfs-t30.ext4'
+__rootfs_ubuntu_arm='rootfs-u1404.ext4'
+__rootfs_default=''
+
+# Set environment  of QEMU
 function set_configuration {
 __arch='-M vexpress-a9 -smp cores=2 -m 1024'
 __kernel='-kernel ./kernel/kernel43-zImage-vexpress -dtb ./kernel/kernel43-vexpress-v2p-ca9.dtb'
-__image='-drive file=./platform/rootfs-t30.ext4,if=sd,format=raw,cache=writeback' 
-__kernelopt='console=ttyAMA0,115200 rw security=none data=writeback,nobh libata.force=noncq elevator=noop root=/dev/mmcblk0'
+__image='-drive file=./platform/'$__rootfs_default',if=sd,format=raw,cache=writeback' 
+__kernelopt='console=ttyAMA0,115200 rw security=none single recovery data=writeback,nobh libata.force=noncq elevator=noop root=/dev/mmcblk0'
 __graphic_no='-nographic'
 __graphic_yes='-serail stdio'
 __network='-net nic,model=lan9118 -net tap,ifname=tap0,script=no'
 }
-__tap0='false'
 
 ### Select menu between running environment and build environment
 function select_guestos {
@@ -50,18 +57,21 @@ echo -e ""
 echo -e " =============== ${Blue}Linux/ARM Emulator (for .Net Core)${NoColor} ================= "
 echo -e ""
 echo -e " * ${Red}Notice${NoColor}: This emulator only supports ${Yellow}Ubuntu 14.04 x64${NoColor} LTS PC.           "
-echo -e "           and does not support a GUI stack (e.g. window manager).                "
+echo -e "           and does not support a GUI stack (e.g. window manager).    "
+echo -e "           The emulator kernel is customized based on Linux kernel 4.3 "
 echo -e ""
 echo -e " ${Yellow}[User Mode]${NoColor}"
 echo -e " ---------------------"
-echo -e " 1. Starting OS with Linux kernel 4.3 "
+echo -e " 1. Starting Ubuntu/ARM OS(Hard-FP ABI) "
 echo -e ""
-echo -e " 2. Starting OS with Linux kernel 4.3 with virtual network for scp/ssh"
+echo -e " 2. Starting Linux/ARM  OS(Soft-FP ABI) "
 echo -e ""
 echo -e ""
 echo -e " ${Yellow}[Developer Mode]${NoColor}"
 echo -e " ---------------------"
-echo -e " 3. Soft-ABI-based Linux/ARM Development Environment (Experimental)"
+echo -e " 3. Starting Ubuntu/ARM OS(Hard-FP ABI) with chroot "
+echo -e ""
+echo -e " 4. Starting Linux/ARM  OS(Soft-FP ABI) with chroot "
 echo -e ""
 echo -e " q. Exit"
 echo -e ""
@@ -78,13 +88,7 @@ if [[ "$MENU_NO" = "" ]]; then
 fi
 
 if [[ "$MENU_NO" = "1" ]]; then
-	# arm v7 - cortex-a9 with linux 4.3 (up-to-date)
-	echo -e ""
-	echo -e ""
-	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no
-
-elif [[ "$MENU_NO" = "2" ]]; then
-	# arm v7 - cortex-a9 with linux 4.3 (up-to-date)
+	# Ubuntu/ARM: arm v7 - cortex-a9 with linux 4.3 (up-to-date)
 	echo -e ""
 	__tap0=`ifconfig | grep tap0 | awk '{print $1}'`
         if [[ "$__tap0" != "tap0" ]]; then
@@ -92,15 +96,43 @@ elif [[ "$MENU_NO" = "2" ]]; then
 	   exit 1  
 	fi
 	echo -e ""
+        __rootfs_default=$__rootfs_ubuntu_arm
+        set_configuration
+	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no $__network
+	echo -e ""
+	echo -e ""
+
+
+elif [[ "$MENU_NO" = "2" ]]; then
+	# Linux/ARM: arm v7 - cortex-a9 with linux 4.3 (up-to-date)
+	echo -e ""
+	__tap0=`ifconfig | grep tap0 | awk '{print $1}'`
+        if [[ "$__tap0" != "tap0" ]]; then
+	   display_network_guide
+	   exit 1  
+	fi
+	echo -e ""
+        __rootfs_default=$__rootfs_linux_arm
+        set_configuration
 	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no $__network
 	echo -e ""
 	echo -e ""
 
 elif [[ "$MENU_NO" = "3" ]]; then
-	# arm v7 - cortex-a9 with linux 4.3 (up-to-date)
+	# Ubuntu/ARM: arm v7 - cortex-a9 with linux 4.3 (up-to-date)
 	echo -e ""
+        __rootfs_default=$__rootfs_ubuntu_arm
 	make_arm_build_env
 	echo -e ""
+
+elif [[ "$MENU_NO" = "4" ]]; then
+	# Linux/ARM: arm v7 - cortex-a9 with linux 4.3 (up-to-date)
+	echo -e ""
+        __rootfs_default=$__rootfs_linux_arm
+	make_arm_build_env
+	echo -e ""
+
+
 elif [[ "$MENU_NO" = "q" || "$MENU_NO" = "Q" ]]; then
 	exit 1
 else
@@ -117,16 +149,16 @@ fi
 QEMU=""
 CHROOT_PS1="\[\e[1;35m\](chroot):\u\[\e[m\]\]"
 function make_arm_build_env {
-sudo mount platform/rootfs-t30.ext4 ./platform/my/
+sudo mount platform/$__rootfs_default  ./platform/my/
 sudo mount -t proc /proc    ./platform/my/proc
 sudo mount -o bind /dev/    ./platform/my/dev
 sudo mount -o bind /dev/pts ./platform/my/dev/pts
 sudo mount -t tmpfs shm     ./platform/my/run/shm
 sudo mount -o bind /sys     ./platform/my/sys
-# sudo mount -o bind /work/nfs     ./platform/my/nfs
+sudo mount -o bind /work/nfs     ./platform/my/nfs
 if ! uname -m | grep -q arm;then QEMU=qemu-arm-static; fi
 sudo chroot ./platform/my/ $QEMU /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
-# sudo umount ./platform/my/nfs
+sudo umount ./platform/my/nfs
 sudo umount ./platform/my/sys
 sudo umount ./platform/my/proc
 sudo umount ./platform/my/run/shm

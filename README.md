@@ -8,7 +8,7 @@
  * Target Architecture: ARMV7LE
  * Compatible Target Boards: 
    - Ubuntu/ARM 14.04 based: Raspberry Pi2 Board, Samsung ARM Chromebook
-   - Traditional ARM/Linux based: Odroid (X)U3 , Z3/TM1
+   - Traditional Linux/ARM based: Odroid (X)U3 , Z3/TM1
 
 ## Major Goal
 
