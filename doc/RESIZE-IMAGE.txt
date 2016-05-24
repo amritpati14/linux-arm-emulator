@@ -14,10 +14,15 @@ disk size: 4.0G
 
 
 2. Run resize2fs command for guest image
+
+2.1 with e2fsck 
 sudo losetup -f --show rootfs-t30.ext4
 sudo e2fsck -fy  /dev/loop0
 sudo resize2fs   /dev/loop0
 sudo losetup -d  /dev/loop0
+
+2.2  with fsck.ext4
+sudo fsck.ext4 -yf rootfs-t30.ext4
 
 
 3. Check increased size of guest image on ARM Emulator:
