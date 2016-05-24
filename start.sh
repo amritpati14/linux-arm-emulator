@@ -4,8 +4,8 @@
 # LINUX/ARM EMULATOR FOR EVALUATING .NET CORE
 # Author: Geunsik Lim (geunsik.lim@samsung.com)
 # Major Goal: 
-# 1) Run Exectuable ARM binary on a virtual device
-# 2) Build a source for Linux/ARM on a virtual device
+# 1) Run Exectuable env. for developer does not have device
+# 2) Build .Net Core source for Linux/ARM
 #
 
 ### Interrupt Setting
@@ -33,13 +33,14 @@ White='\e[0;37m'        # White
 
 # Initialize default variables
 __tap0='false'
+
 __rootfs_default=''
 __rootfs_linux_arm='rootfs-t30.ext4'
 __rootfs_ubuntu_arm='rootfs-u1404.ext4'
 
 __user_mode_default=''
 __user_mode_linux_arm=''
-__user_mode_ubuntu_arm='single noplymouth'
+__user_mode_ubuntu_arm='single console noplymouth'
 
 # Set environment variables of QEMU kernel
 function set_configuration {
@@ -83,7 +84,27 @@ echo -e " ===================================================================== 
 read -p " >> Enter Number (e.g. 1):" MENU_NO
 }
 
+### Check if a file exist.
+function check_file_exist(){
+	if [[ ! -f "./platform/$1" ]];then
+            echo -e ""
+            echo -e "${Red}ERROR${NoColor}: The ./platform/$1 file does not exist."
+            echo -e ""
+            echo -e ""
+            exit 1
+        fi
+}
 
+### Check if a folder exist.
+function check_folder_exist(){
+	if [[ ! -d "./platform/$1" ]];then
+            echo -e ""
+            echo -e "${Red}ERROR${NoColor}: The ./platform/$1 folder does not exist."
+            echo -e ""
+            echo -e ""
+            exit 1
+        fi
+}
 ### Start Emulator
 function start_emulator {
 MENU_NO=$1
@@ -102,6 +123,7 @@ if [[ "$MENU_NO" = "1" ]]; then
 	echo -e ""
         __user_mode_default=$__user_mode_ubuntu_arm
         __rootfs_default=$__rootfs_ubuntu_arm
+        check_file_exist $__rootfs_default 
         set_configuration
 	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no $__network
 	echo -e ""
@@ -119,6 +141,7 @@ elif [[ "$MENU_NO" = "2" ]]; then
 	echo -e ""
         __user_mode_default=$__user_mode_linux_arm
         __rootfs_default=$__rootfs_linux_arm
+        check_file_exist $__rootfs_default 
         set_configuration
 	qemu-system-arm $__arch $__kernel $__image -append "$__kernelopt" $__graphic_no $__network
 	echo -e ""
@@ -128,14 +151,18 @@ elif [[ "$MENU_NO" = "3" ]]; then
 	# Ubuntu/ARM: arm v7 - cortex-a9 with linux 4.3 (up-to-date)
 	echo -e ""
         __rootfs_default=$__rootfs_ubuntu_arm
-	make_arm_build_env
+        check_file_exist $__rootfs_default 
+        check_folder_exist "binding"
+	goto_arm_chroot_env
 	echo -e ""
 
 elif [[ "$MENU_NO" = "4" ]]; then
 	# Linux/ARM: arm v7 - cortex-a9 with linux 4.3 (up-to-date)
 	echo -e ""
         __rootfs_default=$__rootfs_linux_arm
-	make_arm_build_env
+        check_file_exist $__rootfs_default 
+        check_folder_exist "binding"
+	goto_arm_chroot_env
 	echo -e ""
 
 
@@ -146,34 +173,36 @@ else
 fi
 }
 
+
+### Setting of chroot command
 # Enabling binary format support for ARM binaries through Qemu: 
 # .https://www.kernel.org/doc/Documentation/binfmt_misc.txt
-# .sudo cp /usr/bin/qemu-arm-static  ./platform/my/usr/bin/
-# .How to force unmount (with a lazy unmount): umount -l ./platform/my/
+# .sudo cp /usr/bin/qemu-arm-static  ./platform/binding/usr/bin/
+# .How to force unmount (with a lazy unmount): umount -l ./platform/binding/
 # .Note: In case of /etc/init.d/rcS, mount -t tmpfs shm /dev/shm
 #
 QEMU=""
 CHROOT_PS1="\[\e[1;35m\](chroot):\u\[\e[m\]\]"
-function make_arm_build_env {
-sudo mount platform/$__rootfs_default  ./platform/my/
-sudo mount -t proc /proc    ./platform/my/proc
-sudo mount -o bind /dev/    ./platform/my/dev
-sudo mount -o bind /dev/pts ./platform/my/dev/pts
-sudo mount -t tmpfs shm     ./platform/my/run/shm
-sudo mount -o bind /sys     ./platform/my/sys
-sudo mount -o bind /work/nfs     ./platform/my/nfs
+function goto_arm_chroot_env {
+sudo mount platform/$__rootfs_default  ./platform/binding/
+sudo mount -t proc /proc    ./platform/binding/proc
+sudo mount -o bind /dev/    ./platform/binding/dev
+sudo mount -o bind /dev/pts ./platform/binding/dev/pts
+sudo mount -t tmpfs shm     ./platform/binding/run/shm
+sudo mount -o bind /sys     ./platform/binding/sys
+sudo mount -o bind /work/nfs     ./platform/binding/nfs
 if ! uname -m | grep -q arm;then QEMU=qemu-arm-static; fi
-sudo chroot ./platform/my/ $QEMU /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
-sudo umount ./platform/my/nfs
-sudo umount ./platform/my/sys
-sudo umount ./platform/my/proc
-sudo umount ./platform/my/run/shm
-sudo umount ./platform/my/dev/pts
-sudo umount ./platform/my/dev
-sudo umount ./platform/my/
+sudo chroot ./platform/binding/ $QEMU /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
+sudo umount ./platform/binding/nfs
+sudo umount ./platform/binding/sys
+sudo umount ./platform/binding/proc
+sudo umount ./platform/binding/run/shm
+sudo umount ./platform/binding/dev/pts
+sudo umount ./platform/binding/dev
+sudo umount ./platform/binding/
 }
 
-# Enabling virtual network interface
+### Enabling virtual network interface
 #
 function display_network_guide {
 	echo -e ""
@@ -183,6 +212,7 @@ function display_network_guide {
 	echo -e ""
 	echo -e " ----------------------------------------------   "
 	echo -e " ubuntu14.04$> sudo apt-get install uml-utilities "
+	echo -e ""
 	echo -e " ubuntu14.04$> sudo tunctl -u `whoami` -t tap0    "
 	echo -e " ubuntu14.04$> sudo ifconfig tap0 192.168.100.1 up"
 	echo -e " ubuntu14.04$> ./start.sh                         "
@@ -191,8 +221,8 @@ function display_network_guide {
 	echo -e ""
 }
 
-### Start Script: main function
+### Start of main function
 set_configuration
 start_emulator $1
 
-# end of line
+### End of main function
