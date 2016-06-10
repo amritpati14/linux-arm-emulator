@@ -3,6 +3,18 @@ Changelog
 =========
 
 
+#################### [ver. 20160610-1300] #########################
+Appended cross compilation support to build corefx
+ .keyutils-1.5.3-5.17.armv7l.rpm
+ .keyutils-devel-1.5.3-5.17.armv7l.rpm
+ .krb5-1.10.2-5.8.armv7l.rpm
+ .krb5-devel-1.10.2-5.8.armv7l.rpm
+ .libcom_err-devel-1.42.11-1.8.armv7l.rpm
+ .libkeyutils-1.5.3-5.17.armv7l.rpm
+ .setenv_corefx.sh
+ .zlib-1.2.8-1.10.armv7l.rpm
+ .zlib-devel-1.2.8-1.10.armv7l.rpm
+
 #################### [ver. 20160426-1600] #########################
 Added /dev/shm/ (= /run/shm/) to support sem_open() system call for semaphore
 Updated prompt of the chroot root filesystem
