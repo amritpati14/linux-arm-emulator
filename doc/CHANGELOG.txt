@@ -4,6 +4,11 @@ Changelog
 
 
 #################### [ver. 20160610-1300] #########################
+Appended ARM CI to support coreclr's cross-compilation
+ Below files are located /dotnet/setenv/ (./platform/rootfs-t30.ext4) folder.
+ ./coreclr_cross.patch
+ ./setenv_incpath
+
 Appended cross compilation support to build corefx
  .keyutils-1.5.3-5.17.armv7l.rpm
  .keyutils-devel-1.5.3-5.17.armv7l.rpm
