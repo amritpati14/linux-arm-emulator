@@ -37,6 +37,7 @@ __tap0='false'
 __rootfs_default=''
 __rootfs_linux_arm='rootfs-t30.ext4'
 __rootfs_ubuntu_arm='rootfs-u1404.ext4'
+__rootfs_nfs='/work/nfs'
 
 __user_mode_default=''
 __user_mode_linux_arm=''
@@ -184,13 +185,13 @@ fi
 QEMU=""
 CHROOT_PS1="\[\e[1;35m\](chroot):\u\[\e[m\]\]"
 function goto_arm_chroot_env {
-sudo mount platform/$__rootfs_default  ./platform/binding/
-sudo mount -t proc /proc    ./platform/binding/proc
-sudo mount -o bind /dev/    ./platform/binding/dev
-sudo mount -o bind /dev/pts ./platform/binding/dev/pts
-sudo mount -t tmpfs shm     ./platform/binding/run/shm
-sudo mount -o bind /sys     ./platform/binding/sys
-sudo mount -o bind /work/nfs     ./platform/binding/nfs
+sudo mount platform/$__rootfs_default   ./platform/binding/
+sudo mount -t proc /proc    		./platform/binding/proc
+sudo mount -o bind /dev/    		./platform/binding/dev
+sudo mount -o bind /dev/pts	        ./platform/binding/dev/pts
+sudo mount -t tmpfs shm     		./platform/binding/run/shm
+sudo mount -o bind /sys     		./platform/binding/sys
+sudo mount -o bind $__rootfs_nfs	./platform/binding/nfs
 if ! uname -m | grep -q arm;then QEMU=qemu-arm-static; fi
 sudo chroot ./platform/binding/ $QEMU /usr/bin/env PS1="${CHROOT_PS1}" /bin/bash
 sudo umount ./platform/binding/nfs

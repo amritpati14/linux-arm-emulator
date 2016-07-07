@@ -4,6 +4,13 @@ Changelog
 
 
 #################### [ver. 20160610-1300] #########################
+Added /work/nfs folder for nfs operation
+Appended ARM CI to support corefx's cross-compilation
+ ./corefx_cross.patch
+ .updated related two rpms:
+  coreutils-8.21-0.armv7l.rpm
+  perl-5.20.0-3.18.armv7l.rpm
+
 Appended ARM CI to support coreclr's cross-compilation
  Below files are located /dotnet/setenv/ (./platform/rootfs-t30.ext4) folder.
  ./coreclr_cross.patch
